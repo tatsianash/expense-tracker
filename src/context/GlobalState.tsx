@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, PropsWithChildren } from 'react';
+import React, { createContext, useReducer } from 'react';
 import { FCC } from '../utility.ts/types';
 import { AppReducer } from './AppReducer';
 
@@ -9,22 +9,31 @@ export interface Transaction {
 }
 export type State = Transaction[];
 
-const initialState = [
-  { id: 1, text: 'Flower', amount: -20 },
-  { id: 2, text: 'Salary', amount: 300 },
-  { id: 3, text: 'Book', amount: -10 },
-  { id: 4, text: 'Camera', amount: 150 },
-];
-
+const initialState: State = [];
 //create context
-export const GlobalContext = createContext(initialState);
+export const GlobalContext = createContext({
+  transactions: initialState,
+  deleteTransaction: (state: number) => {},
+  addTransaction: (transaction: Transaction) => {},
+});
 
 //Provider component
 export const GlobalProvider: FCC = ({ children }) => {
   //createreducer
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
+  function deleteTransaction(id: number) {
+    dispatch({ type: 'deleteTransaction', payload: { id } });
+  }
+
+  function addTransaction(newTransaction: Transaction) {
+    dispatch({ type: 'addTransaction', payload: { newTransaction } });
+  }
+
   return (
-    <GlobalContext.Provider value={state}>{children}</GlobalContext.Provider>
+    <GlobalContext.Provider
+      value={{ transactions: state, addTransaction, deleteTransaction }}>
+      {children}
+    </GlobalContext.Provider>
   );
 };

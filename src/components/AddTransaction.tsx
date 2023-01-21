@@ -1,9 +1,19 @@
-import { useState } from 'react';
+import { useContext, useState, MouseEvent } from 'react';
+import { GlobalContext } from '../context/GlobalState';
 
 export function AddTransaction() {
   const [text, setText] = useState('');
   const [amount, setAmount] = useState(0.0);
 
+  const { addTransaction, transactions } = useContext(GlobalContext);
+
+  const handleAdd = (e: MouseEvent) => {
+    e.preventDefault();
+    function generateID() {
+      return Math.floor(Math.random() * 100000000);
+    }
+    addTransaction({ id: generateID(), text, amount });
+  };
   return (
     <>
       <h3>Add new transaction</h3>
@@ -29,7 +39,9 @@ export function AddTransaction() {
             placeholder="Enter amount..."
           />
         </div>
-        <button className="btn">Add transaction</button>
+        <button className="btn" onClick={(e) => handleAdd(e)}>
+          Add transaction
+        </button>
       </form>
     </>
   );
